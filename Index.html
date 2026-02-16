@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>GANA GALLERY</title>
+
+<style>
+body{
+    margin:0;
+    font-family:Arial, sans-serif;
+    background:linear-gradient(#b91c1c,#111);
+    color:white;
+    text-align:center;
+}
+
+h1{
+    padding:15px;
+}
+
+.player{
+    max-width:350px;
+    margin:auto;
+    background:rgba(0,0,0,0.4);
+    padding:20px;
+    border-radius:15px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.6);
+}
+
+.banner img{
+    width:100%;
+    border-radius:12px;
+}
+
+.song-title{
+    font-size:20px;
+    margin-top:10px;
+}
+
+.controls button{
+    font-size:22px;
+    margin:10px;
+    padding:10px 15px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+}
+
+input[type=range]{
+    width:100%;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🎧 GANA GALLERY</h1>
+
+<div class="player">
+
+    <div class="banner">
+        <img id="banner" src="">
+    </div>
+
+    <div class="song-title" id="title">Song Name</div>
+
+    <input type="range" id="progress" value="0">
+
+    <audio id="audio"></audio>
+
+    <div class="controls">
+        <button onclick="prevSong()">⏮</button>
+        <button onclick="togglePlay()">▶ / ⏸</button>
+        <button onclick="nextSong()">⏭</button>
+    </div>
+
+    <div class="controls">
+        <button onclick="shuffle()">🔀 Shuffle</button>
+        <button onclick="repeat()">🔁 Repeat</button>
+    </div>
+
+</div>
+
+<script>
+const songs = [
+    {
+        name: "Falak Tak",
+        file: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+        banner: "https://picsum.photos/400?random=1"
+    },
+    {
+        name: "Tum Hi Ho",
+        file: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+        banner: "https://picsum.photos/400?random=2"
+    },
+    {
+        name: "Kesariya",
+        file: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
+        banner: "https://picsum.photos/400?random=3"
+    }
+];
+
+let index = 0;
+let isShuffle = false;
+let isRepeat = false;
+
+const audio = document.getElementById("audio");
+const banner = document.getElementById("banner");
+const title = document.getElementById("title");
+const progress = document.getElementById("progress");
+
+function loadSong(i){
+    audio.src = songs[i].file;
+    banner.src = songs[i].banner;
+    title.innerText = songs[i].name;
+}
+loadSong(index);
+
+function togglePlay(){
+    if(audio.paused) audio.play();
+    else audio.pause();
+}
+
+function nextSong(){
+    if(isShuffle){
+        index = Math.floor(Math.random() * songs.length);
+    } else {
+        index = (index + 1) % songs.length;
+    }
+    loadSong(index);
+    audio.play();
+}
+
+function prevSong(){
+    index = (index - 1 + songs.length) % songs.length;
+    loadSong(index);
+    audio.play();
+}
+
+function shuffle(){
+    isShuffle = !isShuffle;
+    alert("Shuffle " + (isShuffle ? "ON 🔀" : "OFF"));
+}
+
+function repeat(){
+    isRepeat = !isRepeat;
+    alert("Repeat " + (isRepeat ? "ON 🔁" : "OFF"));
+}
+
+audio.ontimeupdate = () => {
+    progress.value = (audio.currentTime / audio.duration) * 100 || 0;
+};
+
+progress.oninput = () => {
+    audio.currentTime = (progress.value / 100) * audio.duration;
+};
+
+audio.onended = () => {
+    if(isRepeat) audio.play();
+    else nextSong();
+};
+</script>
+
+</body>
+</html>
